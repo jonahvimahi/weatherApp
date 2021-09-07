@@ -3,6 +3,7 @@ const baseURL = "http://api.weatherapi.com/v1";
 
 document.getElementById("enter").addEventListener("click", (e) => {
     e.preventDefault()
+    document.querySelector('ul').innerHTML = "";
   let q = document.getElementById("search").value;
   let current = "/current.json";
 
@@ -17,13 +18,12 @@ document.getElementById("enter").addEventListener("click", (e) => {
   axios.request(options).then((res) => {
       console.log(res.data);
       let weather = {
-          name: res.data.location.name,
-          region: res.data.location.region,
+          name: res.data.location.name + ',' + ' ' + res.data.location.region,
+          
           country: res.data.location.country,
           
-          temp: res.data.current.temp_f,
-          condition:
-          res.data.current.condition.text,
+          temp: res.data.current.temp_f + '°F',
+          condition: res.data.current.condition.text,
         };
         for(item in weather){
             let list = document.createElement('li')

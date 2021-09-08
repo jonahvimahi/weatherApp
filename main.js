@@ -3,7 +3,8 @@ const baseURL = "http://api.weatherapi.com/v1";
 
 document.getElementById("enter").addEventListener("click", (e) => {
   e.preventDefault();
-  document.querySelector("ul").innerHTML = "";
+  document.getElementById("info").innerHTML = "";
+  document.getElementById("more-info").innerHTML = "";
   let q = document.getElementById("search").value;
   let current = "/current.json";
 
@@ -16,15 +17,15 @@ document.getElementById("enter").addEventListener("click", (e) => {
     },
   };
   axios.request(options).then((res) => {
-    console.log(res.data);
     let weather = {
+      time: res.data.location.localtime,
       name: res.data.location.name + "," + " " + res.data.location.region,
-
       country: res.data.location.country,
 
       temp: res.data.current.temp_f + "°F",
       condition: res.data.current.condition.text,
     };
+
     for (item in weather) {
       let list = document.createElement("li");
       list.textContent = weather[item];
@@ -34,13 +35,16 @@ document.getElementById("enter").addEventListener("click", (e) => {
     image.src = res.data.current.condition.icon;
     document.getElementById("info").appendChild(image);
   });
+
 });
+document.getElementById("forecast").addEventListener("click", (e) => {
+  e.preventDefault();
+  document.getElementById("more-info").innerHTML = "";
 
-document.getElementById("forecast").addEventListener("click", () => {
-  document.querySelector("more-info").innerHTML = "";
 
-  let q = document.querySelector("search").value;
+  let q = document.getElementById("search").value;
   let forecast = "/forecast.json";
+  let days = '1';
 
   let options = {
     method: "GET",
@@ -48,19 +52,21 @@ document.getElementById("forecast").addEventListener("click", () => {
     params: {
       key,
       q,
+      days,
     },
   };
   axios.request(options).then((res) => {
+      // console.log(res.data)
     let allInfo = {
-      date: res.data.forecast.forecastday.date,
-      maxtemp: res.data.forecast.forecastday.day.maxtemp_f,
-      mintemp: res.data.forecast.forecastday.day.mintemp_f,
-      sunrise: res.data.forecast.forecastday.astro.sunrise,
-      sunset: res.data.forecast.forecastday.astro.sunset,
+      date: "Date: " + res.data.forecast.forecastday[0].date,
+      maxtemp: "Max temp: " + res.data.forecast.forecastday[0].day.maxtemp_f + "°F",
+      mintemp: "Min temp: " + res.data.forecast.forecastday[0].day.mintemp_f + "°F",
+      sunrise: "Sunrise: " + res.data.forecast.forecastday[0].astro.sunrise,
+      sunset: "Sunset: " + res.data.forecast.forecastday[0].astro.sunset,
     };
     for (item in allInfo) {
       let list = document.createElement("li");
-      list.textcontent = weather[item];
+      list.textContent = allInfo[item];
       document.getElementById("more-info").appendChild(list);
     }
   });
